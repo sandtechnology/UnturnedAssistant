@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="unturnedtranslationtool" default="all">
+  
+  
+  <property file="build.properties"/>
+  <!-- Uncomment the following property if no tests compilation is needed -->
+  <!-- 
+  <property name="skip.tests" value="true"/>
+   -->
+  
+  <!-- Compiler options -->
+  
+  <property name="compiler.debug" value="on"/>
+  <property name="compiler.generate.no.warnings" value="off"/>
+  <property name="compiler.args" value=""/>
+  <property name="compiler.max.memory" value="700m"/>
+  <patternset id="ignored.files">
+    <exclude name="**/*.hprof/**"/>
+    <exclude name="**/*.pyc/**"/>
+    <exclude name="**/*.pyo/**"/>
+    <exclude name="**/*.rbc/**"/>
+    <exclude name="**/*.yarb/**"/>
+    <exclude name="**/*~/**"/>
+    <exclude name="**/.DS_Store/**"/>
+    <exclude name="**/.git/**"/>
+    <exclude name="**/.hg/**"/>
+    <exclude name="**/.svn/**"/>
+    <exclude name="**/CVS/**"/>
+    <exclude name="**/__pycache__/**"/>
+    <exclude name="**/_svn/**"/>
+    <exclude name="**/vssver.scc/**"/>
+    <exclude name="**/vssver2.scc/**"/>
+  </patternset>
+  <patternset id="library.patterns">
+    <include name="*.war"/>
+    <include name="*.swc"/>
+    <include name="*.apk"/>
+    <include name="*.zip"/>
+    <include name="*.egg"/>
+    <include name="*.ane"/>
+    <include name="*.jar"/>
+    <include name="*.ear"/>
+    <include name="*.klib"/>
+  </patternset>
+  <patternset id="compiler.resources">
+    <exclude name="**/?*.java"/>
+    <exclude name="**/?*.form"/>
+    <exclude name="**/?*.class"/>
+    <exclude name="**/?*.groovy"/>
+    <exclude name="**/?*.scala"/>
+    <exclude name="**/?*.flex"/>
+    <exclude name="**/?*.kt"/>
+    <exclude name="**/?*.clj"/>
+    <exclude name="**/?*.aj"/>
+  </patternset>
+  
+  <!-- Modules -->
+  
+  
+  <!-- Module UnturnedIDSpawner -->
+  
+  <dirname property="module.unturnedidspawner.basedir" file="${ant.file}"/>
+  
+  
+  
+  <property name="compiler.args.unturnedidspawner" value="-encoding UTF-8 -source 8 -target 8 ${compiler.args}"/>
+  
+  <property name="unturnedidspawner.output.dir" value="${module.unturnedidspawner.basedir}/out/production/UnturnedIDSpawner"/>
+  <property name="unturnedidspawner.testoutput.dir" value="${module.unturnedidspawner.basedir}/out/test/UnturnedIDSpawner"/>
+  
+  <path id="unturnedidspawner.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="unturnedidspawner.module.production.classpath"/>
+  
+  <path id="unturnedidspawner.runtime.production.module.classpath">
+    <pathelement location="${unturnedidspawner.output.dir}"/>
+  </path>
+  
+  <path id="unturnedidspawner.module.classpath">
+    <pathelement location="${unturnedidspawner.output.dir}"/>
+  </path>
+  
+  <path id="unturnedidspawner.runtime.module.classpath">
+    <pathelement location="${unturnedidspawner.testoutput.dir}"/>
+    <pathelement location="${unturnedidspawner.output.dir}"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.unturnedidspawner">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.unturnedidspawner">
+    <patternset refid="excluded.from.module.unturnedidspawner"/>
+  </patternset>
+  
+  <path id="unturnedidspawner.module.sourcepath">
+    <dirset dir="${module.unturnedidspawner.basedir}">
+      <include name="src"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.unturnedidspawner" depends="compile.module.unturnedidspawner.production,compile.module.unturnedidspawner.tests" description="Compile module UnturnedIDSpawner"/>
+  
+  <target name="compile.module.unturnedidspawner.production" description="Compile module UnturnedIDSpawner; production classes">
+    <mkdir dir="${unturnedidspawner.output.dir}"/>
+    <javac destdir="${unturnedidspawner.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true">
+      <compilerarg line="${compiler.args.unturnedidspawner}"/>
+      <bootclasspath refid="unturnedidspawner.module.bootclasspath"/>
+      <classpath refid="unturnedidspawner.module.production.classpath"/>
+      <src refid="unturnedidspawner.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.unturnedidspawner"/>
+    </javac>
+    
+    <copy todir="${unturnedidspawner.output.dir}">
+      <fileset dir="${module.unturnedidspawner.basedir}/src">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.unturnedidspawner.tests" depends="compile.module.unturnedidspawner.production" description="compile module UnturnedIDSpawner; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.unturnedidspawner" description="cleanup module">
+    <delete dir="${unturnedidspawner.output.dir}"/>
+    <delete dir="${unturnedidspawner.testoutput.dir}"/>
+  </target>
+  
+  <target name="init" description="Build initialization">
+    <!-- Perform any build initialization in this target -->
+  </target>
+  
+  <target name="clean" depends="clean.module.unturnedidspawner" description="cleanup all"/>
+  
+  <target name="build.modules" depends="init, clean, compile.module.unturnedidspawner" description="build all modules"/>
+  
+  <target name="init.artifacts">
+    <property name="artifacts.temp.dir" value="${basedir}/__artifacts_temp"/>
+    <property name="artifact.output.unturnedidspawner" value="${basedir}/out/artifacts/UnturnedIDSpawner"/>
+    <mkdir dir="${artifacts.temp.dir}"/>
+    <property name="temp.jar.path.UnturnedIDSpawner.jar" value="${artifacts.temp.dir}/UnturnedIDSpawner.jar"/>
+  </target>
+  
+  <target name="artifact.unturnedidspawner" depends="init.artifacts, compile.module.unturnedidspawner" description="Build &#39;UnturnedIDSpawner&#39; artifact">
+    <property name="artifact.temp.output.unturnedidspawner" value="${artifacts.temp.dir}/UnturnedIDSpawner"/>
+    <mkdir dir="${artifact.temp.output.unturnedidspawner}"/>
+    <jar destfile="${temp.jar.path.UnturnedIDSpawner.jar}" duplicate="preserve" filesetmanifest="mergewithoutmain">
+      <zipfileset dir="${unturnedidspawner.output.dir}"/>
+      <zipfileset file="${basedir}/out/META-INF/MANIFEST.MF" prefix="META-INF"/>
+    </jar>
+    <copy file="${temp.jar.path.UnturnedIDSpawner.jar}" tofile="${artifact.temp.output.unturnedidspawner}/UnturnedIDSpawner.jar"/>
+  </target>
+  
+  <target name="build.all.artifacts" depends="artifact.unturnedidspawner" description="Build all artifacts">
+    <mkdir dir="${artifact.output.unturnedidspawner}"/>
+    <copy todir="${artifact.output.unturnedidspawner}">
+      <fileset dir="${artifact.temp.output.unturnedidspawner}"/>
+    </copy>
+    
+    <!-- Delete temporary files -->
+    <delete dir="${artifacts.temp.dir}"/>
+  </target>
+  
+  <target name="all" depends="build.modules, build.all.artifacts" description="build all"/>
+</project>
