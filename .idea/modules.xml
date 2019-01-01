@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/UnturnedIDSpawner.iml" filepath="$PROJECT_DIR$/UnturnedIDSpawner.iml" />
+      <module fileurl="file://$PROJECT_DIR$/UnturnedAssistant.iml" filepath="$PROJECT_DIR$/UnturnedAssistant.iml" />
     </modules>
   </component>
 </project>

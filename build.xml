@@ -57,108 +57,108 @@
   <!-- Modules -->
   
   
-  <!-- Module UnturnedIDSpawner -->
+  <!-- Module UnturnedAssistant -->
   
-  <dirname property="module.unturnedidspawner.basedir" file="${ant.file}"/>
+  <dirname property="module.unturnedassistant.basedir" file="${ant.file}"/>
   
   
   
-  <property name="compiler.args.unturnedidspawner" value="-encoding UTF-8 -source 8 -target 8 ${compiler.args}"/>
+  <property name="compiler.args.unturnedassistant" value="-encoding UTF-8 -source 8 -target 8 ${compiler.args}"/>
   
-  <property name="unturnedidspawner.output.dir" value="${module.unturnedidspawner.basedir}/out/production/UnturnedIDSpawner"/>
-  <property name="unturnedidspawner.testoutput.dir" value="${module.unturnedidspawner.basedir}/out/test/UnturnedIDSpawner"/>
+  <property name="unturnedassistant.output.dir" value="${module.unturnedassistant.basedir}/out/production/UnturnedAssistant"/>
+  <property name="unturnedassistant.testoutput.dir" value="${module.unturnedassistant.basedir}/out/test/UnturnedAssistant"/>
   
-  <path id="unturnedidspawner.module.bootclasspath">
+  <path id="unturnedassistant.module.bootclasspath">
     <!-- Paths to be included in compilation bootclasspath -->
   </path>
   
-  <path id="unturnedidspawner.module.production.classpath"/>
+  <path id="unturnedassistant.module.production.classpath"/>
   
-  <path id="unturnedidspawner.runtime.production.module.classpath">
-    <pathelement location="${unturnedidspawner.output.dir}"/>
+  <path id="unturnedassistant.runtime.production.module.classpath">
+    <pathelement location="${unturnedassistant.output.dir}"/>
   </path>
   
-  <path id="unturnedidspawner.module.classpath">
-    <pathelement location="${unturnedidspawner.output.dir}"/>
+  <path id="unturnedassistant.module.classpath">
+    <pathelement location="${unturnedassistant.output.dir}"/>
   </path>
   
-  <path id="unturnedidspawner.runtime.module.classpath">
-    <pathelement location="${unturnedidspawner.testoutput.dir}"/>
-    <pathelement location="${unturnedidspawner.output.dir}"/>
+  <path id="unturnedassistant.runtime.module.classpath">
+    <pathelement location="${unturnedassistant.testoutput.dir}"/>
+    <pathelement location="${unturnedassistant.output.dir}"/>
   </path>
   
   
-  <patternset id="excluded.from.module.unturnedidspawner">
+  <patternset id="excluded.from.module.unturnedassistant">
     <patternset refid="ignored.files"/>
   </patternset>
   
-  <patternset id="excluded.from.compilation.unturnedidspawner">
-    <patternset refid="excluded.from.module.unturnedidspawner"/>
+  <patternset id="excluded.from.compilation.unturnedassistant">
+    <patternset refid="excluded.from.module.unturnedassistant"/>
   </patternset>
   
-  <path id="unturnedidspawner.module.sourcepath">
-    <dirset dir="${module.unturnedidspawner.basedir}">
+  <path id="unturnedassistant.module.sourcepath">
+    <dirset dir="${module.unturnedassistant.basedir}">
       <include name="src"/>
     </dirset>
   </path>
   
   
-  <target name="compile.module.unturnedidspawner" depends="compile.module.unturnedidspawner.production,compile.module.unturnedidspawner.tests" description="Compile module UnturnedIDSpawner"/>
+  <target name="compile.module.unturnedassistant" depends="compile.module.unturnedassistant.production,compile.module.unturnedassistant.tests" description="Compile module UnturnedAssistant"/>
   
-  <target name="compile.module.unturnedidspawner.production" description="Compile module UnturnedIDSpawner; production classes">
-    <mkdir dir="${unturnedidspawner.output.dir}"/>
-    <javac destdir="${unturnedidspawner.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true">
-      <compilerarg line="${compiler.args.unturnedidspawner}"/>
-      <bootclasspath refid="unturnedidspawner.module.bootclasspath"/>
-      <classpath refid="unturnedidspawner.module.production.classpath"/>
-      <src refid="unturnedidspawner.module.sourcepath"/>
-      <patternset refid="excluded.from.compilation.unturnedidspawner"/>
+  <target name="compile.module.unturnedassistant.production" description="Compile module UnturnedAssistant; production classes">
+    <mkdir dir="${unturnedassistant.output.dir}"/>
+    <javac destdir="${unturnedassistant.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true">
+      <compilerarg line="${compiler.args.unturnedassistant}"/>
+      <bootclasspath refid="unturnedassistant.module.bootclasspath"/>
+      <classpath refid="unturnedassistant.module.production.classpath"/>
+      <src refid="unturnedassistant.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.unturnedassistant"/>
     </javac>
     
-    <copy todir="${unturnedidspawner.output.dir}">
-      <fileset dir="${module.unturnedidspawner.basedir}/src">
+    <copy todir="${unturnedassistant.output.dir}">
+      <fileset dir="${module.unturnedassistant.basedir}/src">
         <patternset refid="compiler.resources"/>
         <type type="file"/>
       </fileset>
     </copy>
   </target>
   
-  <target name="compile.module.unturnedidspawner.tests" depends="compile.module.unturnedidspawner.production" description="compile module UnturnedIDSpawner; test classes" unless="skip.tests"/>
+  <target name="compile.module.unturnedassistant.tests" depends="compile.module.unturnedassistant.production" description="compile module UnturnedAssistant; test classes" unless="skip.tests"/>
   
-  <target name="clean.module.unturnedidspawner" description="cleanup module">
-    <delete dir="${unturnedidspawner.output.dir}"/>
-    <delete dir="${unturnedidspawner.testoutput.dir}"/>
+  <target name="clean.module.unturnedassistant" description="cleanup module">
+    <delete dir="${unturnedassistant.output.dir}"/>
+    <delete dir="${unturnedassistant.testoutput.dir}"/>
   </target>
   
   <target name="init" description="Build initialization">
     <!-- Perform any build initialization in this target -->
   </target>
   
-  <target name="clean" depends="clean.module.unturnedidspawner" description="cleanup all"/>
+  <target name="clean" depends="clean.module.unturnedassistant" description="cleanup all"/>
   
-  <target name="build.modules" depends="init, clean, compile.module.unturnedidspawner" description="build all modules"/>
+  <target name="build.modules" depends="init, clean, compile.module.unturnedassistant" description="build all modules"/>
   
   <target name="init.artifacts">
     <property name="artifacts.temp.dir" value="${basedir}/__artifacts_temp"/>
-    <property name="artifact.output.unturnedidspawner" value="${basedir}/out/artifacts/UnturnedIDSpawner"/>
+    <property name="artifact.output.unturnedassistant" value="${basedir}/out/artifacts/UnturnedAssistant"/>
     <mkdir dir="${artifacts.temp.dir}"/>
-    <property name="temp.jar.path.UnturnedIDSpawner.jar" value="${artifacts.temp.dir}/UnturnedIDSpawner.jar"/>
+    <property name="temp.jar.path.UnturnedAssistant.jar" value="${artifacts.temp.dir}/UnturnedAssistant.jar"/>
   </target>
   
-  <target name="artifact.unturnedidspawner" depends="init.artifacts, compile.module.unturnedidspawner" description="Build &#39;UnturnedIDSpawner&#39; artifact">
-    <property name="artifact.temp.output.unturnedidspawner" value="${artifacts.temp.dir}/UnturnedIDSpawner"/>
-    <mkdir dir="${artifact.temp.output.unturnedidspawner}"/>
-    <jar destfile="${temp.jar.path.UnturnedIDSpawner.jar}" duplicate="preserve" filesetmanifest="mergewithoutmain">
-      <zipfileset dir="${unturnedidspawner.output.dir}"/>
-      <zipfileset file="${basedir}/out/META-INF/MANIFEST.MF" prefix="META-INF"/>
+  <target name="artifact.unturnedassistant" depends="init.artifacts, compile.module.unturnedassistant" description="Build &#39;UnturnedAssistant&#39; artifact">
+    <property name="artifact.temp.output.unturnedassistant" value="${artifacts.temp.dir}/UnturnedAssistant"/>
+    <mkdir dir="${artifact.temp.output.unturnedassistant}"/>
+    <jar destfile="${temp.jar.path.UnturnedAssistant.jar}" duplicate="preserve" filesetmanifest="mergewithoutmain">
+      <zipfileset dir="${unturnedassistant.output.dir}"/>
+      <zipfileset file="${basedir}/META-INF/MANIFEST.MF" prefix="META-INF"/>
     </jar>
-    <copy file="${temp.jar.path.UnturnedIDSpawner.jar}" tofile="${artifact.temp.output.unturnedidspawner}/UnturnedIDSpawner.jar"/>
+    <copy file="${temp.jar.path.UnturnedAssistant.jar}" tofile="${artifact.temp.output.unturnedassistant}/UnturnedAssistant.jar"/>
   </target>
   
-  <target name="build.all.artifacts" depends="artifact.unturnedidspawner" description="Build all artifacts">
-    <mkdir dir="${artifact.output.unturnedidspawner}"/>
-    <copy todir="${artifact.output.unturnedidspawner}">
-      <fileset dir="${artifact.temp.output.unturnedidspawner}"/>
+  <target name="build.all.artifacts" depends="artifact.unturnedassistant" description="Build all artifacts">
+    <mkdir dir="${artifact.output.unturnedassistant}"/>
+    <copy todir="${artifact.output.unturnedassistant}">
+      <fileset dir="${artifact.temp.output.unturnedassistant}"/>
     </copy>
     
     <!-- Delete temporary files -->
