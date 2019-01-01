@@ -10,6 +10,7 @@ import java.nio.file.Paths;
 //NetBean生成
 public class Displayer extends javax.swing.JFrame {
     private Path path;
+    private String version="V1.0";
 
     public Displayer(String paths) {
         try {
@@ -32,7 +33,7 @@ public class Displayer extends javax.swing.JFrame {
         javax.swing.JTextField jTextField1 = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("Unturned ID生成器");
+        setTitle("Unturned ID生成器 "+version);
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         setIconImage(new ImageIcon(getClass().getResource("/assets/icon.gif")).getImage());
 
