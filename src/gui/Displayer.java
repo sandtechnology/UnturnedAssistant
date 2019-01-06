@@ -10,7 +10,7 @@ import java.nio.file.Paths;
 //NetBean生成
 public class Displayer extends javax.swing.JFrame {
     private Path path;
-    private String version="V1.0";
+    private String version = "V1.1";
 
     public Displayer(String paths) {
         try {
