@@ -1,6 +1,6 @@
 <component name="ArtifactManager">
   <artifact type="jar" build-on-make="true" name="UnturnedAssistant">
-    <output-path>$PROJECT_DIR$/out/artifacts/UnturnedAssistant</output-path>
+    <output-path>$PROJECT_DIR$/../UnturnedAssistant/out/artifacts/UnturnedAssistant</output-path>
     <root id="archive" name="UnturnedAssistant.jar">
       <element id="module-output" name="UnturnedAssistant" />
       <element id="directory" name="META-INF">

@@ -1,12 +1,11 @@
 package io;
 
-import io.Items.*;
 import io.Items.Map;
 import io.Items.Objects;
+import io.Items.*;
 
 import javax.swing.*;
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.*;
@@ -121,11 +120,12 @@ public class BATFileVisitor implements FileVisitor<Path> {
             lists.forEach(List::clear);
             Files.walkFileTree(path, new BATFileVisitor());
             lists.forEach(x->x.sort(LocalizableItem::compareTo));
-            textArea.append("===============动物===============\n");
+            textArea.append("生成日期：" + new Date().toString() + "\n\n");
+            textArea.append("===============动物===============\n\n");
             animals.forEach(x -> textArea.append(x.toString() + "\n"));
-            textArea.append("===============物品===============\n");
+            textArea.append("===============物品===============\n\n");
             items.forEach(x -> textArea.append(x.toString() + "\n"));
-            textArea.append("===============载具===============\n");
+            textArea.append("===============载具===============\n\n");
             vehicles.forEach(x -> textArea.append(x.toString() + "\n"));
         }
         catch (Exception e) {

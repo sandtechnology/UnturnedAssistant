@@ -5,6 +5,8 @@ deploy:
   provider: releases
   api_key:
     secure: vODam8v4JtGElfp/kvHOuHf1M3MU0ZI1iyeHShn4nk/3FMSsw856aNhWizxy9H3ldhoA8P+OFha8K0aPR5gsJSSQY2XnIYhNWyP7qlxr9nV6hwuff22cSKymOifhveOVdVe6VNagDTPNeYZMeT9H2CvWHRu2LbNw/O97aBo5qogGmNopNxpWLKBOESyn2QAl2Dr2qP9Ksc182xZtmVrBZIXU2GF7m4UIhLqlZ7zQ+/vxxw+SoMxSerrBXbvqHB1tfDhBr69yocz039+PVO6Vb6ba1XEeCvJn5pYIPlp4rQncSIPgizxkgm77HreHjgK9IetlFgBzxkV361UF0Cd5i8Ik4V6vleh/HZnDYYobE7EPkvlsphyD76BeXqBvLE5rjPwDKtUabfUl+ZTBeyrUDRgbD+1XrtxK9Ln7QPygx/W0gCkd41XA+SthXWYwR6thiMdNIAI/U7MTJzOnU9VYCJ4hOCXCTM6yR1JkcEIKWFwlUOyz17H1mnzfm7lGfu4cxIAS51sUq9uVnuFYnYy39a1ZflpPtKT+um+u/ioaEoqgXZzGDu35V1UoYR+V1KjW4rIPayyqaIakFKLCwNOEO/HRs5Qg/ptJ6P/htgKR4WkaDhwm7FXqsJDkTXGsYG5/L1tRD/4nZWZ/Kzb198SpAdMBmN8FhiClZ8GjE7H05Og=
-  file: out\artifacts\UnturnedAssistant\UnturnedAssistant.jar
+  file: ./out/artifacts/UnturnedAssistant/UnturnedAssistant.jar
+  skip_cleanup: true
   on:
     repo: sandtechnology/UnturnedAssistant
+    tags: true

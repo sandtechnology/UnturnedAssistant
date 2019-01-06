@@ -36,7 +36,6 @@ public class Displayer extends javax.swing.JFrame {
         setTitle("Unturned ID生成器 "+version);
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         setIconImage(new ImageIcon(getClass().getResource("/assets/icon.gif")).getImage());
-
         jTextField1.setEditable(false);
         jTextArea1.setEditable(false);
         jTextArea1.setColumns(20);
@@ -49,10 +48,15 @@ public class Displayer extends javax.swing.JFrame {
         jButton1.addActionListener(evt -> {
             jTextField1.setText("处理中....");
             jButton1.setEnabled(false);
-            new BATFileVisitor().visit(path,jTextArea1);
-            jTextField1.setText(path.toString());
-            jTextArea1.setEditable(true);
-        jButton1.setEnabled(true);
+            jButton2.setEnabled(false);
+            Thread process = new Thread(() -> {
+                new BATFileVisitor().visit(path, jTextArea1);
+                jTextField1.setText(path.toString());
+                jTextArea1.setEditable(true);
+                jButton1.setEnabled(true);
+                jButton2.setEnabled(true);
+            });
+            process.start();
         });
 
         jButton2.setFont(new java.awt.Font("微软雅黑", Font.PLAIN, 12)); // NOI18N

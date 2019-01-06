@@ -13,7 +13,12 @@ public enum EnumItem {
     NAME("Name"),
     DESCRIPTION("Description"),
     WIDTH("Width"),
-    HEIGHT("Height");
+    HEIGHT("Height"),
+    HEALTH_VALUE("Health"),
+    FOOD_VALUE("Food"),
+    WATER_VALUE("Water"),
+    VIRUS_VALUE("Virus");
+
     private final String name;
 
     EnumItem(String name) {

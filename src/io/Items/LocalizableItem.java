@@ -2,6 +2,7 @@ package io.Items;
 
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 import static io.Items.EnumItem.ID;
@@ -12,7 +13,8 @@ public abstract class LocalizableItem implements Comparable<LocalizableItem>, Co
     public String getLang(String key) {
         return infoMap.getOrDefault(key, "");
     }
-    public HashMap<String, String> getLangInfo() {
+
+    public Map<String, String> getLangInfo() {
         return infoMap;
     }
 
@@ -30,22 +32,10 @@ public abstract class LocalizableItem implements Comparable<LocalizableItem>, Co
     }
 
     private int getID() {
-        if (infoMap.get(EnumItem.ID.toString()) != null) {
-            return Integer.parseInt(infoMap.get(ID.toString()));
-        }
-        else {
-            return 0;
-        }
+        return Integer.parseInt(infoMap.getOrDefault(ID.toString(), "0"));
     }
     @Override
     public String toString() {
-        StringBuilder str = new StringBuilder();
-        for (String set : infoMap.keySet()) {
-            if (set.equals(ID.toString()) || set.equals(NAME.toString())) {
-                str.append(infoMap.getOrDefault(set,"无"));
-                str.append(" ");
-            }
-        }
-        return str.toString();
+        return infoMap.getOrDefault(ID.toString(), "-1") + "   " + infoMap.getOrDefault(NAME.toString(), "名称未定义");
     }
 }
