@@ -1,15 +1,12 @@
 package io.Items;
 
-import java.util.HashMap;
-import java.util.Objects;
-import static io.Items.EnumItem.*;
 
-public class Item extends BaseItem{
+import java.util.HashMap;
+
+public class Item extends LocalizableItem {
 
     public Item(HashMap<String,String> map){
-        super(map);
-        set.addAll(getAllItems());
-        map.keySet().retainAll(set);
+        map.keySet().retainAll(EnumItem.Item.getAttrs());
         infoMap=map;
     }
 }
