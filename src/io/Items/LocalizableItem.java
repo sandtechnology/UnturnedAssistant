@@ -35,7 +35,6 @@ public abstract class LocalizableItem implements Comparable<LocalizableItem>, Co
     public String toString() {
         return infoMap.getOrDefault("ID", "-1") + "   " + infoMap.getOrDefault("Name", "名称未定义");
     }
-
     public boolean equals(Object obj) {
         return (obj instanceof LocalizableItem) && ((LocalizableItem) obj).infoMap.equals(infoMap);
     }

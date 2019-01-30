@@ -38,10 +38,10 @@ public class Displayer extends javax.swing.JFrame {
         javax.swing.JTextField jTextField1 = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        String version = "V1.1";
+        String version = "V2.0";
         setTitle("Unturned ID生成器 " + version);
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-        setIconImage(new ImageIcon(getClass().getResource("/assets/icon.gif")).getImage());
+        setIconImage(new ImageIcon(getClass().getResource("/assets/icon.jpg")).getImage());
         jTextField1.setEditable(false);
         jTextArea1.setEditable(false);
         jTextArea1.setColumns(20);
@@ -71,15 +71,15 @@ public class Displayer extends javax.swing.JFrame {
             @Override
             protected void done() {
                 try {
-                    jTextArea1.append("耗时：" + (System.nanoTime() - time) * 10E-9 + " s\n\n");
+                    jTextArea1.append("耗时：" + (System.nanoTime() - time) * 10E-9 + " s\n");
                 }
                 catch (Exception e) {
                     e.printStackTrace();
                 }
-                jTextArea1.append("生成日期：" + LocalDate.now() + "\n\n");
+                jTextArea1.append("生成日期：" + LocalDate.now() + "\n");
                 itemMap.forEach((i, j) ->
                 {
-                    jTextArea1.append("===============" + i + "===============\n\n");
+                    jTextArea1.append("\n===============" + i + "===============\n\n");
                     j.forEach(x -> jTextArea1.append(x.toString() + "\n"));
                 });
                 jTextField1.setText(path.toString());

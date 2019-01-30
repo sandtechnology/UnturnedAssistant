@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="unturnedtranslationtool" default="all">
+<project name="unturnedassistant" default="all">
   
   
   <property file="build.properties"/>
@@ -99,6 +99,7 @@
   <path id="unturnedassistant.module.sourcepath">
     <dirset dir="${module.unturnedassistant.basedir}">
       <include name="src"/>
+        <include name="Resources"/>
     </dirset>
   </path>
   
@@ -120,6 +121,10 @@
         <patternset refid="compiler.resources"/>
         <type type="file"/>
       </fileset>
+        <fileset dir="${module.unturnedassistant.basedir}/Resources">
+            <patternset refid="compiler.resources"/>
+            <type type="file"/>
+        </fileset>
     </copy>
   </target>
   
@@ -150,7 +155,8 @@
     <mkdir dir="${artifact.temp.output.unturnedassistant}"/>
     <jar destfile="${temp.jar.path.UnturnedAssistant.jar}" duplicate="preserve" filesetmanifest="mergewithoutmain">
       <zipfileset dir="${unturnedassistant.output.dir}"/>
-      <zipfileset file="${basedir}/META-INF/MANIFEST.MF" prefix="META-INF"/>
+        <zipfileset file="${basedir}/UnturnedTranslationTool/META-INF/MANIFEST.MF" prefix="META-INF"/>
+        <zipfileset dir="${basedir}/UnturnedTranslationTool/Resources"/>
     </jar>
     <copy file="${temp.jar.path.UnturnedAssistant.jar}" tofile="${artifact.temp.output.unturnedassistant}/UnturnedAssistant.jar"/>
   </target>

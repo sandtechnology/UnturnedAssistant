@@ -2,7 +2,6 @@ package io;
 
 import io.Items.Animals;
 import io.Items.Item;
-import io.Items.Map;
 import io.Items.Objects;
 import io.Items.Vehicle;
 import io.Items.*;
@@ -12,6 +11,7 @@ import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -19,14 +19,16 @@ import java.util.logging.Logger;
 import static io.Items.EnumItem.*;
 
 public class BATFileVisitor implements FileVisitor<Path> {
-    private static final HashMap<String, List<LocalizableItem>> itemMap = new HashMap<>();
+    private static final HashMap<String, List<LocalizableItem>> itemMap = new LinkedHashMap<>();
     private static final Logger logger = Logger.getLogger("[File Visit Test]");
     private static final BATFileVisitor visitor = new BATFileVisitor();
 
     private BATFileVisitor() {
         logger.setLevel(Level.OFF);
         for (EnumItem item : EnumItem.values()) {
-            itemMap.put(item.getName(), new ArrayList<>());
+            if (!item.getName().equals("地图")) {
+                itemMap.put(item.getName(), new ArrayList<>());
+            }
         }
     }
 
@@ -80,6 +82,7 @@ public class BATFileVisitor implements FileVisitor<Path> {
     public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
         if (file.endsWith("English.dat")) {
             List<String> info = new ArrayList<>();
+            info.add("Path" + " " + file.toString());
             logger.info("Found Language File:" + file);
             //语言文件位于的文件夹名称
             Path pathname = file.subpath(file.getNameCount() - 2, file.getNameCount() - 1);
@@ -103,7 +106,7 @@ public class BATFileVisitor implements FileVisitor<Path> {
                     fillList(info, Animals.getName(), Animals.class);
                 }
             }
-            //用于NPC文件的判断——任务、NPC、对话、商店
+ /*           //用于NPC文件的判断——任务、NPC、对话、商店
             Path npcInfoFile = Paths.get(file.getParent().toString(), "Asset.dat");
             if (npcInfoFile.toFile().exists()) {
                 info.addAll(Files.readAllLines(npcInfoFile));
@@ -126,7 +129,7 @@ public class BATFileVisitor implements FileVisitor<Path> {
             if(!infoFile.toFile().exists()&&!npcInfoFile.toFile().exists()){
                 info.addAll(Files.readAllLines(file));
                 fillList(info, Map.getName(), Map.class);
-            }
+            }*/
         }
         return FileVisitResult.CONTINUE;
     }

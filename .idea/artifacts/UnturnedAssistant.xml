@@ -4,8 +4,9 @@
     <root id="archive" name="UnturnedAssistant.jar">
       <element id="module-output" name="UnturnedAssistant" />
       <element id="directory" name="META-INF">
-        <element id="file-copy" path="$PROJECT_DIR$/META-INF/MANIFEST.MF" />
+        <element id="file-copy" path="$PROJECT_DIR$/../UnturnedAssistant/UnturnedTranslationTool/META-INF/MANIFEST.MF" />
       </element>
+      <element id="dir-copy" path="$PROJECT_DIR$/../UnturnedAssistant/UnturnedTranslationTool/Resources" />
     </root>
   </artifact>
 </component>

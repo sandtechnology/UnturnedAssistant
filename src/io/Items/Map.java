@@ -7,4 +7,9 @@ public class Map extends LocalizableItem {
         map.keySet().retainAll(EnumItem.Map.getAttrs());
         infoMap=map;
     }
+
+    @Override
+    public String toString() {
+        return infoMap.getOrDefault("Path", "未定义") + "\n地图名称：" + infoMap.getOrDefault("Name", "未定义") + "\n" + infoMap.getOrDefault("Description", "未定义");
+    }
 }
