@@ -11,7 +11,7 @@ import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.LinkedList;
 
-import static Language.LanguageManager.getLocalizedMessage;
+import static Language.LanguageManager.getI18nText;
 import static io.BATFileVisitor.visit;
 
 //NetBean生成
@@ -39,8 +39,8 @@ public class Displayer extends javax.swing.JFrame {
         javax.swing.JTextField jTextField1 = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        String version = "V3.0";
-        setTitle(getLocalizedMessage("gui.title") + version);
+        String version = "V3.3";
+        setTitle(getI18nText("gui.title") + version);
         setIconImage(new ImageIcon(getClass().getResource("/assets/icon.jpg")).getImage());
         jTextField1.setEditable(false);
         jTextArea1.setEditable(false);
@@ -50,14 +50,14 @@ public class Displayer extends javax.swing.JFrame {
         jScrollPane1.setViewportView(jTextArea1);
 
         jButton1.setFont(new java.awt.Font(Font.SANS_SERIF, Font.PLAIN, 12)); // NOI18N
-        jButton1.setText(getLocalizedMessage("gui.button.start"));
+        jButton1.setText(getI18nText("gui.button.start"));
         jButton1.addActionListener(evt -> new SwingWorker<Boolean, String>() {
             private long time;
             private LinkedList<LocalizableItem> itemMap;
 
             @Override
             protected Boolean doInBackground() {
-                jTextField1.setText(getLocalizedMessage("gui.processing"));
+                jTextField1.setText(getI18nText("gui.processing"));
                 jTextArea1.setEditable(false);
                 jTextArea1.setText("");
                 jButton1.setEnabled(false);
@@ -67,7 +67,7 @@ public class Displayer extends javax.swing.JFrame {
                     itemMap = visit(path);
                 }
                 catch (Exception ex) {
-                    jTextArea1.append(getLocalizedMessage("gui.error") + "\n");
+                    jTextArea1.append(getI18nText("gui.error") + "\n");
                     ex.printStackTrace(new PrintStream(new JTextAreaWithInputStream(jTextArea1)));
                     jTextField1.setText(path.toString());
                     jTextArea1.setEditable(true);
@@ -80,8 +80,8 @@ public class Displayer extends javax.swing.JFrame {
 
             @Override
             protected void done() {
-                jTextArea1.append(getLocalizedMessage("gui.result.cost") + (System.nanoTime() - time) * 10E-9 + " s\n");
-                jTextArea1.append(getLocalizedMessage("gui.result.date") + LocalDate.now() + "\n");
+                jTextArea1.append(getI18nText("gui.result.cost") + (System.nanoTime() - time) * 10E-9 + " s\n");
+                jTextArea1.append(getI18nText("gui.result.date") + LocalDate.now() + "\n");
                 for (LocalizableItem item : itemMap) {
                     String lastType = "";
                     if (!item.getType().equals(lastType)) {
@@ -98,12 +98,12 @@ public class Displayer extends javax.swing.JFrame {
         }.execute());
 
         jButton2.setFont(new java.awt.Font(Font.SANS_SERIF, Font.PLAIN, 12)); // NOI18N
-        jButton2.setText(getLocalizedMessage("gui.button.filechoose"));
+        jButton2.setText(getI18nText("gui.button.filechoose"));
         jButton2.addActionListener(evt -> {
             JFileChooser chooser=new JFileChooser(path.toFile());
             chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-            chooser.setDialogTitle(getLocalizedMessage("gui.button.filechoose.title"));
-            chooser.showDialog(jButton2, getLocalizedMessage("gui.button.filechoose.select"));
+            chooser.setDialogTitle(getI18nText("gui.button.filechoose.title"));
+            chooser.showDialog(jButton2, getI18nText("gui.button.filechoose.select"));
             if(chooser.getSelectedFile()!=null) {
                 path = chooser.getSelectedFile().toPath();
                 jTextField1.setText(path.toString());

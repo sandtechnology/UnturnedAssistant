@@ -3,7 +3,7 @@ package io.Items;
 import java.util.HashMap;
 import java.util.List;
 
-import static Language.LanguageManager.getLocalizedMessage;
+import static Language.LanguageManager.getI18nText;
 
 public class Map extends LocalizableItem {
     public Map(String type, List<String> keys, HashMap<String, String> dataMap) {
@@ -12,6 +12,6 @@ public class Map extends LocalizableItem {
 
     @Override
     public String toString() {
-        return infoMap.getOrDefault("Path", getLocalizedMessage("result.namenoexist")) + "\n" + getLocalizedMessage("result.mapname") + infoMap.getOrDefault("Name", getLocalizedMessage("result.namenoexist")) + "\n" + infoMap.getOrDefault("Description", getLocalizedMessage("result.namenoexist"));
+        return infoMap.getOrDefault("Path", getI18nText("result.namenoexist")) + "\n" + getI18nText("result.mapname") + infoMap.getOrDefault("Name", getI18nText("result.namenoexist")) + "\n" + infoMap.getOrDefault("Description", getI18nText("result.namenoexist"));
     }
 }

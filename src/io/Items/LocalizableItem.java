@@ -3,7 +3,7 @@ package io.Items;
 import java.util.Map;
 import java.util.*;
 
-import static Language.LanguageManager.getLocalizedMessage;
+import static Language.LanguageManager.getI18nText;
 
 public class LocalizableItem implements Comparable<LocalizableItem>, Comparator<LocalizableItem> {
 
@@ -49,7 +49,7 @@ public class LocalizableItem implements Comparable<LocalizableItem>, Comparator<
 
     @Override
     public String toString() {
-        return id + "   " + infoMap.getOrDefault("Name", getLocalizedMessage("result.namenoexist"));
+        return id + "   " + infoMap.getOrDefault("Name", getI18nText("result.namenoexist"));
     }
 
     public boolean equals(Object obj) {
