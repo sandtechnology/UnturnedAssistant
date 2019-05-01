@@ -1,14 +1,32 @@
 package io.Items;
 
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.*;
 
-public abstract class LocalizableItem implements Comparable<LocalizableItem>, Comparator<LocalizableItem> {
-    HashMap<String, String> infoMap;
+import static Language.LanguageManager.getLocalizedMessage;
+
+public class LocalizableItem implements Comparable<LocalizableItem>, Comparator<LocalizableItem> {
+
+    final HashMap<String, String> infoMap;
+    private final String type;
+    private final int id;
     public String getLang(String key) {
         return infoMap.getOrDefault(key, "");
+    }
+
+    public LocalizableItem(String type, List<String> keys, HashMap<String, String> dataMap) {
+        this.type = type;
+        dataMap.keySet().retainAll(keys);
+        id = Integer.parseInt(dataMap.getOrDefault("ID", "0"));
+        infoMap = dataMap;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public String getType() {
+        return type;
     }
 
     public Map<String, String> getLang() {
@@ -18,29 +36,28 @@ public abstract class LocalizableItem implements Comparable<LocalizableItem>, Co
     public boolean setLang(String key, String value) {
         return infoMap.replace(key, value) != null;
     }
+
     @Override
     public int compare(LocalizableItem o1, LocalizableItem o2) {
-        return Integer.compare(o1.getID(), o2.getID());
+        return o1.type.equals(o2.type) ? Integer.compare(o1.id, o2.id) : Integer.compare(ItemLibrary.Ordinal.getAttrs().indexOf(o1.type), ItemLibrary.Ordinal.getAttrs().indexOf(o2.type));
     }
 
     @Override
     public int compareTo(LocalizableItem o) {
-        return Integer.compare(getID(), o.getID());
+        return compare(this, o);
     }
 
-    private int getID() {
-        return Integer.parseInt(infoMap.getOrDefault("ID", "0"));
-    }
     @Override
     public String toString() {
-        return infoMap.getOrDefault("ID", "-1") + "   " + infoMap.getOrDefault("Name", "名称未定义");
+        return id + "   " + infoMap.getOrDefault("Name", getLocalizedMessage("result.namenoexist"));
     }
+
     public boolean equals(Object obj) {
-        return (obj instanceof LocalizableItem) && ((LocalizableItem) obj).infoMap.equals(infoMap);
+        return (obj instanceof LocalizableItem) && type.equals(((LocalizableItem) obj).type) && id == ((LocalizableItem) obj).id;
     }
 
     @Override
     public int hashCode() {
-        return 31 * infoMap.hashCode();
+        return 31 * (type.hashCode() + id);
     }
 }

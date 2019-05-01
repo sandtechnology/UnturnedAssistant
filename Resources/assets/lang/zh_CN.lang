@@ -1,0 +1,17 @@
+gui.title=Unturned ID生成器 版本
+gui.button.start=开始生成
+gui.processing=处理中....
+gui.error=抱歉，出现了一个错误
+gui.result.cost=耗时：
+gui.result.date=生成日期：
+gui.button.filechoose=选择游戏目录
+gui.button.filechoose.select=选择
+gui.button.filechoose.title=请选择游戏根目录
+
+result.namenoexist=名称未定义
+result.mapname=地图名称：
+unturned.animals=动物
+unturned.item=物品
+unturned.objects=物体
+unturned.map=地图
+unturned.vehicle=载具
