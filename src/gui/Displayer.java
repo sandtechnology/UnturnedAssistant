@@ -39,7 +39,7 @@ public class Displayer extends javax.swing.JFrame {
         javax.swing.JTextField jTextField1 = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        String version = "V3.3";
+        String version = "V3.4";
         setTitle(getI18nText("gui.title") + version);
         setIconImage(new ImageIcon(getClass().getResource("/assets/icon.jpg")).getImage());
         jTextField1.setEditable(false);
@@ -82,8 +82,8 @@ public class Displayer extends javax.swing.JFrame {
             protected void done() {
                 jTextArea1.append(getI18nText("gui.result.cost") + (System.nanoTime() - time) * 10E-9 + " s\n");
                 jTextArea1.append(getI18nText("gui.result.date") + LocalDate.now() + "\n");
+                String lastType = "";
                 for (LocalizableItem item : itemMap) {
-                    String lastType = "";
                     if (!item.getType().equals(lastType)) {
                         lastType = item.getType();
                         jTextArea1.append("\n===============" + lastType + "===============\n\n");
