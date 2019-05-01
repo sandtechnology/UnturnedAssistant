@@ -1,4 +1,5 @@
 language: java
+jdk: openjdk8
 install:
   - sudo apt-get install ant
 script: ant all
@@ -11,4 +12,3 @@ deploy:
   on:
     repo: sandtechnology/UnturnedAssistant
     tags: true
-  jdk: oraclejdk8
