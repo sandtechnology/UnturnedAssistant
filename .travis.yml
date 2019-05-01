@@ -1,7 +1,6 @@
 language: java
 install:
-  - sudo apt-get ant
-  - ant deps
+  - sudo apt-get install ant
 script: ant all
 deploy:
   provider: releases
