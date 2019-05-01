@@ -160,7 +160,7 @@
             description="Build &#39;UnturnedAssistant&#39; artifact">
         <property name="artifact.temp.output.unturnedassistant" value="${artifacts.temp.dir}/UnturnedAssistant"/>
         <mkdir dir="${artifact.temp.output.unturnedassistant}"/>
-        <jar destfile="${temp.jar.path.UnturnedAssistant.jar}" duplicate="preserve" filesetmanifest="mergewithoutmain">
+        <jar destfile="${temp.jar.path.UnturnedAssistant.jar}" duplicate="preserve" filesetmanifest="skip">
             <zipfileset dir="${unturnedassistant.output.dir}"/>
         </jar>
         <copy file="${temp.jar.path.UnturnedAssistant.jar}"
