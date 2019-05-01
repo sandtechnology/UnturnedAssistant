@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import static io.Items.ItemLibrary.*;
@@ -23,6 +24,7 @@ public class BATFileVisitor implements FileVisitor<Path> {
     }
 
     public static LinkedList<LocalizableItem> visit(Path path) throws IOException {
+        logger.setLevel(Level.OFF);
         if (visitor == null) {
             visitor = new BATFileVisitor();
         }

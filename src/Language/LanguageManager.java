@@ -18,16 +18,16 @@ public class LanguageManager {
 
 
     private void loadLanguageFiles(String locale) {
-        Scanner scanner = new Scanner(getClass().getResourceAsStream("/assets/lang/" + locale + ".lang")).useDelimiter("\n");
+        Scanner scanner = new Scanner(getClass().getResourceAsStream("/assets/lang/" + locale + ".lang"), "UTF-8").useDelimiter("\n");
         while (scanner.hasNext()) {
             String[] strings = scanner.next().split("=", 2);
                 if (strings.length == 2) {
                     languageMappings.put(strings[0], strings[1]);
                 }
         }
-        //fallback to en_US
+        //fallback to zh_CN
         if (languageMappings.isEmpty()) {
-            loadLanguageFiles("en_US");
+            loadLanguageFiles("zh_CN");
         }
     }
 }
