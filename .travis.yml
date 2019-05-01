@@ -1,7 +1,6 @@
 language: java
 install: ant deps
-script:
-- ant all
+script: ant all
 deploy:
   provider: releases
   api_key:
@@ -11,3 +10,4 @@ deploy:
   on:
     repo: sandtechnology/UnturnedAssistant
     tags: true
+  jdk: oraclejdk8
