@@ -1,71 +1,46 @@
 package io;
 
-import io.Items.Animals;
-import io.Items.Item;
-import io.Items.Objects;
-import io.Items.Vehicle;
-import io.Items.*;
+import io.Items.LocalizableItem;
 
 import java.io.IOException;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import static io.Items.EnumItem.*;
+import static io.Items.ItemLibrary.*;
 
 public class BATFileVisitor implements FileVisitor<Path> {
-    private static final HashMap<String, List<LocalizableItem>> itemMap = new LinkedHashMap<>();
+    private static BATFileVisitor visitor = new BATFileVisitor();
     private static final Logger logger = Logger.getLogger("[File Visit Test]");
-    private static final BATFileVisitor visitor = new BATFileVisitor();
-
-    private BATFileVisitor() {
-        logger.setLevel(Level.OFF);
-        for (EnumItem item : EnumItem.values()) {
-            if (!item.getName().equals("地图")) {
-                itemMap.put(item.getName(), new ArrayList<>());
-            }
-        }
-    }
-
+    private final LinkedList<LocalizableItem> itemList = new LinkedList<>();
     @Override
     public FileVisitResult visitFileFailed(Path file, IOException exc) {
         return FileVisitResult.CONTINUE;
     }
 
-    public static HashMap<String, List<LocalizableItem>> visit(Path path) {
-        try {
-            itemMap.values().forEach(List::clear);
+    public static LinkedList<LocalizableItem> visit(Path path) throws IOException {
+        if (visitor == null) {
+            visitor = new BATFileVisitor();
+        }
+        visitor.itemList.clear();
             Files.walkFileTree(path, visitor);
-            return itemMap;
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-            return new HashMap<>();
-        }
+        visitor.itemList.sort(LocalizableItem::compareTo);
+        return visitor.itemList;
     }
 
-    private void fillList(List<String> info, String type, Class<? extends LocalizableItem> item) {
+    private void fillList(List<String> info, String type, List<String> keys) {
         HashMap<String, String> infoMap = new HashMap<>();
         info.forEach(x -> {
             //只分割一次
-            String[] result=x.split(" ",2);
+            String[] result = x.split(" ", 2);
             if (result.length == 2)
                 infoMap.put(result[0], result[1]);
         });
-        try {
-            //logger.info(item.getName()+"Constructors:");
-            //Arrays.asList(item.getConstructors()).forEach(x->logger.info(x.getName()));
-            itemMap.get(type).add(item.getConstructor(HashMap.class).newInstance(infoMap));
-        }
-        catch (Exception e) {
-            e.getCause();
-            throw new RuntimeException(e);
-        }
+        itemList.add(new LocalizableItem(type, keys, infoMap));
     }
 
     @Override
@@ -82,7 +57,8 @@ public class BATFileVisitor implements FileVisitor<Path> {
     public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
         if (file.endsWith("English.dat")) {
             List<String> info = new ArrayList<>();
-            info.add("Path" + " " + file.toString());
+            String path = file.toString();
+            info.add("Path" + " " + path);
             logger.info("Found Language File:" + file);
             //语言文件位于的文件夹名称
             Path pathname = file.subpath(file.getNameCount() - 2, file.getNameCount() - 1);
@@ -93,17 +69,17 @@ public class BATFileVisitor implements FileVisitor<Path> {
                 info.addAll(Files.readAllLines(infoFile));
                 info.addAll(Files.readAllLines(file));
                 //物品
-                if (file.toString().contains("Item")) {
-                    fillList(info, Item.getName(), Item.class);
+                if (path.contains("Item")) {
+                    fillList(info, Item.getName(), Item.getAttrs());
                 }//物体
-                else if (file.toString().contains("Objects") || file.toString().contains("Tree")) {
-                    fillList(info, Objects.getName(), Objects.class);
+                else if (path.contains("Objects") || path.contains("Tree")) {
+                    fillList(info, Objects.getName(), Objects.getAttrs());
                 }//载具
-                else if (file.toString().contains("Vehicle")) {
-                    fillList(info, Vehicle.getName(), Vehicle.class);
+                else if (path.contains("Vehicle")) {
+                    fillList(info, Vehicle.getName(), Vehicle.getAttrs());
                 }//动物
-                else if (file.toString().contains("Animals")) {
-                    fillList(info, Animals.getName(), Animals.class);
+                else if (path.contains("Animals")) {
+                    fillList(info, Animals.getName(), Animals.getAttrs());
                 }
             }
  /*           //用于NPC文件的判断——任务、NPC、对话、商店
@@ -112,16 +88,16 @@ public class BATFileVisitor implements FileVisitor<Path> {
                 info.addAll(Files.readAllLines(npcInfoFile));
                 info.addAll(Files.readAllLines(file));
                 //角色
-                if (file.toString().contains("Character")) {
+                if (path.contains("Character")) {
 
                 }//任务
-                else if (file.toString().contains("Quest")) {
+                else if (path.contains("Quest")) {
 
                 }//对话
-                else if (file.toString().contains("Dialogue")) {
+                else if (path.contains("Dialogue")) {
 
                 }//商店
-                else if (file.toString().contains("Vendor")) {
+                else if (path.contains("Vendor")) {
 
                 }
             }

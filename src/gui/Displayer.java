@@ -5,12 +5,13 @@ import io.Items.LocalizableItem;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.PrintStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.List;
+import java.util.LinkedList;
 
+import static Language.LanguageManager.getLocalizedMessage;
 import static io.BATFileVisitor.visit;
 
 //NetBean生成
@@ -38,50 +39,57 @@ public class Displayer extends javax.swing.JFrame {
         javax.swing.JTextField jTextField1 = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        String version = "V2.0";
-        setTitle("Unturned ID生成器 " + version);
-        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        String version = "V3.0";
+        setTitle(getLocalizedMessage("gui.title") + version);
         setIconImage(new ImageIcon(getClass().getResource("/assets/icon.jpg")).getImage());
         jTextField1.setEditable(false);
         jTextArea1.setEditable(false);
         jTextArea1.setColumns(20);
-        jTextArea1.setFont(new java.awt.Font("Microsoft YaHei UI", Font.PLAIN, 13)); // NOI18N
+        jTextArea1.setFont(new java.awt.Font(Font.SANS_SERIF, Font.PLAIN, 13)); // NOI18N
         jTextArea1.setRows(5);
         jScrollPane1.setViewportView(jTextArea1);
 
-        jButton1.setFont(new java.awt.Font("微软雅黑", Font.PLAIN, 12)); // NOI18N
-        jButton1.setText("开始生成");
+        jButton1.setFont(new java.awt.Font(Font.SANS_SERIF, Font.PLAIN, 12)); // NOI18N
+        jButton1.setText(getLocalizedMessage("gui.button.start"));
         jButton1.addActionListener(evt -> new SwingWorker<Boolean, String>() {
             private long time;
-            private HashMap<String, List<LocalizableItem>> itemMap;
+            private LinkedList<LocalizableItem> itemMap;
 
             @Override
             protected Boolean doInBackground() {
-                jTextField1.setText("处理中....");
+                jTextField1.setText(getLocalizedMessage("gui.processing"));
                 jTextArea1.setEditable(false);
                 jTextArea1.setText("");
                 jButton1.setEnabled(false);
                 jButton2.setEnabled(false);
                 time = System.nanoTime();
-                itemMap = visit(path);
-                itemMap.values().forEach(x -> x.sort(LocalizableItem::compareTo));
+                try {
+                    itemMap = visit(path);
+                }
+                catch (Exception ex) {
+                    jTextArea1.append(getLocalizedMessage("gui.error") + "\n");
+                    ex.printStackTrace(new PrintStream(new JTextAreaWithInputStream(jTextArea1)));
+                    jTextField1.setText(path.toString());
+                    jTextArea1.setEditable(true);
+                    jButton1.setEnabled(true);
+                    jButton2.setEnabled(true);
+                    return false;
+                }
                 return true;
             }
 
             @Override
             protected void done() {
-                try {
-                    jTextArea1.append("耗时：" + (System.nanoTime() - time) * 10E-9 + " s\n");
+                jTextArea1.append(getLocalizedMessage("gui.result.cost") + (System.nanoTime() - time) * 10E-9 + " s\n");
+                jTextArea1.append(getLocalizedMessage("gui.result.date") + LocalDate.now() + "\n");
+                for (LocalizableItem item : itemMap) {
+                    String lastType = "";
+                    if (!item.getType().equals(lastType)) {
+                        lastType = item.getType();
+                        jTextArea1.append("\n===============" + lastType + "===============\n\n");
+                    }
+                    jTextArea1.append(item.toString() + "\n");
                 }
-                catch (Exception e) {
-                    e.printStackTrace();
-                }
-                jTextArea1.append("生成日期：" + LocalDate.now() + "\n");
-                itemMap.forEach((i, j) ->
-                {
-                    jTextArea1.append("\n===============" + i + "===============\n\n");
-                    j.forEach(x -> jTextArea1.append(x.toString() + "\n"));
-                });
                 jTextField1.setText(path.toString());
                 jTextArea1.setEditable(true);
                 jButton1.setEnabled(true);
@@ -89,13 +97,13 @@ public class Displayer extends javax.swing.JFrame {
             }
         }.execute());
 
-        jButton2.setFont(new java.awt.Font("微软雅黑", Font.PLAIN, 12)); // NOI18N
-        jButton2.setText("选择游戏目录");
+        jButton2.setFont(new java.awt.Font(Font.SANS_SERIF, Font.PLAIN, 12)); // NOI18N
+        jButton2.setText(getLocalizedMessage("gui.button.filechoose"));
         jButton2.addActionListener(evt -> {
             JFileChooser chooser=new JFileChooser(path.toFile());
             chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-            chooser.setDialogTitle("请选择游戏根目录");
-            chooser.showDialog(jButton2,"选择");
+            chooser.setDialogTitle(getLocalizedMessage("gui.button.filechoose.title"));
+            chooser.showDialog(jButton2, getLocalizedMessage("gui.button.filechoose.select"));
             if(chooser.getSelectedFile()!=null) {
                 path = chooser.getSelectedFile().toPath();
                 jTextField1.setText(path.toString());
@@ -103,7 +111,7 @@ public class Displayer extends javax.swing.JFrame {
         });
 
 
-        jTextField1.setFont(new java.awt.Font("微软雅黑", Font.PLAIN, 12)); // NOI18N
+        jTextField1.setFont(new java.awt.Font(Font.SANS_SERIF, Font.PLAIN, 12)); // NOI18N
         jTextField1.setText(path.toString());
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
