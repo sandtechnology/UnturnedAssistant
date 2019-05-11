@@ -6,8 +6,8 @@ import java.util.List;
 import static Language.LanguageManager.getI18nText;
 
 public class Map extends LocalizableItem {
-    public Map(String type, List<String> keys, HashMap<String, String> dataMap) {
-        super(type, keys, dataMap);
+    public Map(String type, List<String> keys, HashMap<String, String> dataMap, HashMap<String, String> langMap) {
+        super(type, keys, dataMap, langMap);
     }
 
     @Override
