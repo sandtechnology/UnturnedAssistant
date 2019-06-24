@@ -1,6 +1,7 @@
 package io;
 
-import io.Items.LocalizableItem;
+import io.item.ItemLibrary;
+import io.item.LocalizableItem;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,12 +14,13 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import static io.Items.ItemLibrary.*;
+import static io.item.ItemLibrary.Ordinal;
 
 public class BATFileVisitor implements FileVisitor<Path> {
     private static BATFileVisitor visitor = new BATFileVisitor();
     private static final Logger logger = Logger.getLogger("[File Visit Test]");
     private final LinkedList<LocalizableItem> itemList = new LinkedList<>();
+
     @Override
     public FileVisitResult visitFileFailed(Path file, IOException exc) {
         return FileVisitResult.CONTINUE;
@@ -26,26 +28,41 @@ public class BATFileVisitor implements FileVisitor<Path> {
 
     public static LinkedList<LocalizableItem> visit(Path path) throws IOException {
         logger.setLevel(Level.INFO);
-        if (visitor == null) {
-            visitor = new BATFileVisitor();
-        }
         visitor.itemList.clear();
-            Files.walkFileTree(path, visitor);
+        Files.walkFileTree(path, visitor);
         visitor.itemList.sort(LocalizableItem::compareTo);
         return visitor.itemList;
     }
 
-    private List<String> findOtherLang(Path path) throws IOException {
-        Path infoFile = path.subpath(path.getNameCount() - 2, path.getNameCount() - 1);
-        File[] files = path.toFile().getParentFile().listFiles(((dir, name) -> name.endsWith(".dat") && !name.endsWith("English.dat") && !name.endsWith(infoFile + ".dat")));
-        if (files != null && files.length != 0) {
-            logger.info("Found Other Language File:" + files[0]);
-            return Files.readAllLines(files[0].toPath());
+
+    private HashMap<String, HashMap<String, String>> getDataMap(HashMap<String, String> infoMap, Path path) throws IOException {
+        HashMap<String, HashMap<String, String>> dataMap = new HashMap<>();
+        //文件信息
+        dataMap.put("info", infoMap);
+        //寻找语言文件
+        //资源文件名称
+        Path infoFile = path.getName(path.getNameCount() - 2);
+        File[] files = path.toFile().getParentFile().listFiles(((dir, name) ->
+                name.endsWith(".dat")
+                        //排除资源文件
+                        && !name.endsWith(infoFile + ".dat")
+                        //排除NPC资源文件
+                        && !name.endsWith("Asset.dat")));
+        if (files != null) {
+            for (File file : files) {
+                logger.info("Found Language File:" + file);
+                dataMap.putIfAbsent(file.getName().replace(".dat", ""), toMap(Files.readAllLines(file.toPath())));
+            }
         }
-        else
-            return new ArrayList<>();
+        return dataMap;
     }
 
+    /**
+     * 将以" "为分隔符的list转换为mapping
+     *
+     * @param list 要转换的列表
+     * @return 转换完毕的mapping
+     */
     private HashMap<String, String> toMap(List<String> list) {
         HashMap<String, String> infoMap = new HashMap<>();
         list.forEach(x -> {
@@ -72,30 +89,37 @@ public class BATFileVisitor implements FileVisitor<Path> {
         if (file.endsWith("English.dat")) {
             List<String> info = new ArrayList<>();
             String path = file.toString();
+            // 添加路径信息
             info.add("Path" + " " + path);
             logger.info("Found English Language File:" + file);
             //语言文件位于的文件夹名称
-            Path pathname = file.subpath(file.getNameCount() - 2, file.getNameCount() - 1);
-            //用于一般描述的描述文件判断——物品、物体、载具等等
+            Path pathname = file.getName(file.getNameCount() - 2);
+            //一般资源文件
             Path infoFile = Paths.get(file.getParent().toString(), pathname + ".dat");
+            //NPC资源文件
+            Path assetFile = Paths.get(file.getParent().toString(), "Asset.dat");
+            //资源文件和English.dat同时存在，为游戏内可见的对象
             if (infoFile.toFile().exists()) {
                 logger.info("Found Info File:" + infoFile);
                 info.addAll(Files.readAllLines(infoFile));
-                info.addAll(Files.readAllLines(file));
-                //物品
-                if (path.contains("Item")) {
-                    itemList.add(new LocalizableItem(Item.getName(), Item.getAttrs(), toMap(info), toMap(findOtherLang(file))));
-                }//物体
-                else if (path.contains("Objects") || path.contains("Tree")) {
-                    itemList.add(new LocalizableItem(Objects.getName(), Objects.getAttrs(), toMap(info), toMap(findOtherLang(file))));
-                }//载具
-                else if (path.contains("Vehicle")) {
-                    itemList.add(new LocalizableItem(Vehicle.getName(), Vehicle.getAttrs(), toMap(info), toMap(findOtherLang(file))));
-                }//动物
-                else if (path.contains("Animals")) {
-                    itemList.add(new LocalizableItem(Vehicle.getName(), Vehicle.getAttrs(), toMap(info), toMap(findOtherLang(file))));
+            }
+            else if (assetFile.toFile().exists()) {
+                logger.info("Found NPC Info File:" + assetFile);
+                info.addAll(Files.readAllLines(assetFile));
+            }
+            //size为1为只有路径信息
+            //大于1说明上面的资源文件存在
+            if (info.size() > 1) {
+                HashMap<String, String> infoMap = toMap(info);
+                for (ItemLibrary item : ItemLibrary.values()) {
+                    //排除自然顺序枚举
+                    if (!item.equals(Ordinal)
+                            && item.getAttrs().contains(infoMap.get("Type"))) {
+                        itemList.add(new LocalizableItem(item.getName(), getDataMap(infoMap, file)));
+                    }
                 }
             }
+
  /*           //用于NPC文件的判断——任务、NPC、对话、商店
             Path npcInfoFile = Paths.get(file.getParent().toString(), "Asset.dat");
             if (npcInfoFile.toFile().exists()) {

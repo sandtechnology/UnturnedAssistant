@@ -1,34 +1,31 @@
-package io.Items;
+package io.item;
 
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.List;
 
 import static Language.LanguageManager.getI18nText;
 
 public class LocalizableItem implements Comparable<LocalizableItem>, Comparator<LocalizableItem> {
 
-    protected final HashMap<String, String> infoMap;
-    protected final HashMap<String, String> langMap;
+    private final HashMap<String, HashMap<String, String>> langMap;
+    private final HashMap<String, String> infoMap;
     private final String type;
     private final int id;
 
 
-    public LocalizableItem(String type, List<String> keys, HashMap<String, String> dataMap, HashMap<String, String> langMap) {
+    public LocalizableItem(String type, HashMap<String, HashMap<String, String>> dataMap) {
         this.type = type;
-        dataMap.keySet().retainAll(keys);
-        langMap.keySet().retainAll(keys);
-        id = Integer.parseInt(dataMap.getOrDefault("ID", "0"));
-        infoMap = dataMap;
-        this.langMap = langMap;
+        infoMap = dataMap.remove("info");
+        id = Integer.valueOf(infoMap.get("ID"));
+        langMap = dataMap;
     }
 
     public String getOriginal(String key) {
         return infoMap.getOrDefault(key, "");
     }
 
-    public String getLang(String key) {
-        return langMap.getOrDefault(key, "");
+    public String getLang(String language, String key) {
+        return langMap.getOrDefault(language, null).getOrDefault(key, "");
     }
 
     public int getId() {
@@ -39,8 +36,8 @@ public class LocalizableItem implements Comparable<LocalizableItem>, Comparator<
         return type;
     }
 
-    public boolean setLang(String key, String value) {
-        return langMap.replace(key, value) != null;
+    public boolean setLang(String language, String key, String value) {
+        return langMap.getOrDefault(language, null).replace(key, value) != null;
     }
 
     @Override
@@ -55,12 +52,16 @@ public class LocalizableItem implements Comparable<LocalizableItem>, Comparator<
 
     @Override
     public String toString() {
-        return id
-                + "   "
-                + infoMap.getOrDefault("Name", getI18nText("result.namenoexist"))
-                + " 【"
-                + langMap.getOrDefault("Name", getI18nText("result.namenoexist"))
-                + "】";
+        StringBuilder result = new StringBuilder(id + "   ");
+        //英语优先
+        result.append(langMap.get("English").getOrDefault("Name", getI18nText("result.null")));
+        //再加其他
+        langMap.forEach((x, y) -> {
+            if (!"English".equals(x)) {
+                result.append("|").append(y.getOrDefault("Name", getI18nText("result.null")));
+            }
+        });
+        return result.toString();
     }
 
     public boolean equals(Object obj) {

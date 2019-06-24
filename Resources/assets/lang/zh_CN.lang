@@ -8,10 +8,13 @@ gui.button.filechoose=选择游戏目录
 gui.button.filechoose.select=选择
 gui.button.filechoose.title=请选择游戏根目录
 
-result.namenoexist=名称未定义
-result.mapname=地图名称：
+result.null=名称未定义
 unturned.animals=动物
 unturned.item=物品
 unturned.objects=物体
 unturned.map=地图
 unturned.vehicle=载具
+unturned.resource=资源
+unturned.dialog=对话
+unturned.npc=NPC
+unturned.quest=任务

@@ -1,7 +1,7 @@
 
 package gui;
 
-import io.Items.LocalizableItem;
+import io.item.LocalizableItem;
 
 import javax.swing.*;
 import java.awt.*;
@@ -39,7 +39,7 @@ public class Displayer extends javax.swing.JFrame {
         javax.swing.JTextField jTextField1 = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        String version = "V3.6";
+        String version = "V3.7";
         setTitle(getI18nText("gui.title") + version);
         setIconImage(new ImageIcon(getClass().getResource("/assets/icon.jpg")).getImage());
         jTextField1.setEditable(false);
