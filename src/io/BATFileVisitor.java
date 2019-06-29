@@ -29,7 +29,7 @@ public class BATFileVisitor implements FileVisitor<Path> {
         if (visitor == null) {
             visitor = new BATFileVisitor();
         }
-        logger.setLevel(Level.INFO);
+        logger.setLevel(Level.OFF);
         visitor.itemList.clear();
         for (Path path : paths) {
             Files.walkFileTree(path, visitor);
@@ -90,7 +90,7 @@ public class BATFileVisitor implements FileVisitor<Path> {
 
     @Override
     public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-        if (file.endsWith("English.dat")) {
+        if (file.toFile().exists() && file.endsWith("English.dat")) {
             List<String> info = new ArrayList<>();
             String path = file.toString();
             // 添加路径信息

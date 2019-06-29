@@ -9,7 +9,7 @@ gui.button.filechoose=选择游戏目录
 gui.button.filechoose.select=选择
 gui.button.filechoose.title=请选择游戏根目录
 
-result.null=名称未定义
+result.null=#未找到#
 unturned.animals=动物
 unturned.item=物品
 unturned.objects=物体

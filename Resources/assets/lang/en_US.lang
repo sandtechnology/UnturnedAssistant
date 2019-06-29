@@ -1,6 +1,6 @@
 gui.title=Unturned ID Generator-Version
 gui.button.start=Start Generate
-gui.checkbox.workshop=Workshop Items？
+gui.checkbox.workshop=Workshop Items?
 gui.processing=Processing....
 gui.error=Sorry,the program ran into a error:
 gui.result.cost=Total Time：
@@ -9,7 +9,7 @@ gui.button.filechoose=Select the game path
 gui.button.filechoose.select=Select
 gui.button.filechoose.title=Please select the root path of the game
 
-result.null=None
+result.null=#Not Found#
 unturned.animals=Animals
 unturned.item=Items
 unturned.objects=Objects

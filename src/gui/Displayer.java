@@ -59,16 +59,19 @@ public class Displayer extends JFrame {
         }
     }
 
+    private void reset() {
+        pm.setProgress(100);
+        selectButton.setEnabled(true);
+        startButton.setEnabled(true);
+    }
     private void initComponents() {
-        String version = "V3.8";
+        String version = "V3.9";
         //设置默认异常捕获
         Thread.setDefaultUncaughtExceptionHandler((t, e) ->
         {
             out.append(getI18nText("gui.error") + "\n" + t.toString() + "\n");
             e.printStackTrace(new PrintWriter(new OutputStreamWriter(new JTextAreaWithInputStream(out), StandardCharsets.UTF_8), true));
-            pm.setProgress(100);
-            selectButton.setEnabled(true);
-            startButton.setEnabled(true);
+            reset();
         });
         //将UI设置在所有组件的前面
         try {
@@ -110,11 +113,13 @@ public class Displayer extends JFrame {
                 path.setText(pathChooser.getSelectedFile().getPath());
             }
         });
-        //设置输出区域
+        //路径显示预排版
+        path.setColumns(30);
+        //输出区域预排版
         out.setRows(30);
         out.setEditable(false);
-        //设置进度条
-        pm.setMillisToDecideToPopup(0);
+        //进度条预排版
+        pm.setNote("awoooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo");
         //设置开始按钮事件
         startButton.addActionListener((Action) ->
         {
@@ -137,21 +142,25 @@ public class Displayer extends JFrame {
                     class Visitor extends BATFileVisitor {
                         @Override
                         public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                            if (pm.isCanceled()) {
+                                reset();
+                                return FileVisitResult.TERMINATE;
+                            }
                             publish(file.toString());
                             super.visitFile(file, attrs);
-                            return pm.isCanceled() ? FileVisitResult.TERMINATE : FileVisitResult.CONTINUE;
+                            return FileVisitResult.CONTINUE;
                         }
                     }
                     //游戏目录：...\steamapps\common\Unturned
                     Path gamePath = Paths.get(path.getText());
-                    //创意工坊物品目录：...\steamapps\workshop\content\304930
-                    Path workshopPath = Paths.get(gamePath.toFile().getParentFile().getParentFile().getPath(), "workshop", "content", "304930");
                     //判断创意工坊
-                    if (workShopCheck.isSelected()) {
+                    if (workShopCheck.isSelected() && gamePath.toFile().exists()) {
+                        //创意工坊物品目录：...\steamapps\workshop\content\304930
+                        Path workshopPath = Paths.get(gamePath.toFile().getParentFile().getParentFile().getPath(), "workshop", "content", "304930");
                         return Visitor.visit(new Visitor(), gamePath, workshopPath);
                     }
                     else {
-                        return Visitor.visit(new Visitor(), Paths.get(path.getText()));
+                        return Visitor.visit(new Visitor(), gamePath);
                     }
                 }
 
@@ -163,6 +172,9 @@ public class Displayer extends JFrame {
                             pm.setProgress(chunks.size() > 100 ? 99 : chunks.size());
                             pm.setNote(path);
                         }
+                    }
+                    else {
+                        reset();
                     }
                 }
 
@@ -193,10 +205,12 @@ public class Displayer extends JFrame {
                                 }
                             }
                         }
-                        pm.setProgress(100);
-                        selectButton.setEnabled(true);
-                        startButton.setEnabled(true);
                     }
+                    else {
+                        out.setText(getI18nText("result.null"));
+                    }
+
+                    reset();
                 }
             }.execute();
         });
