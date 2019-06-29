@@ -1,6 +1,5 @@
 package io;
 
-import com.sun.istack.internal.Nullable;
 import io.item.ItemLibrary;
 import io.item.LocalizableItem;
 
@@ -26,7 +25,7 @@ public class BATFileVisitor implements FileVisitor<Path> {
         return FileVisitResult.CONTINUE;
     }
 
-    public static LinkedList<LocalizableItem> visit(@Nullable BATFileVisitor visitor, Path... paths) throws IOException {
+    public static LinkedList<LocalizableItem> visit(BATFileVisitor visitor, Path... paths) throws IOException {
         if (visitor == null) {
             visitor = new BATFileVisitor();
         }
