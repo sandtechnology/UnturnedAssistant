@@ -11,7 +11,7 @@ class JTextAreaWithInputStream extends OutputStream {
     }
 
     private void append(String str) {
-        SwingUtilities.invokeLater(() -> jTextArea.append(str));
+        jTextArea.append(str);
     }
 
     @Override

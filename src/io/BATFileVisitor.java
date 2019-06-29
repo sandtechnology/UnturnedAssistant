@@ -1,5 +1,6 @@
 package io;
 
+import com.sun.istack.internal.Nullable;
 import io.item.ItemLibrary;
 import io.item.LocalizableItem;
 
@@ -17,7 +18,6 @@ import java.util.logging.Logger;
 import static io.item.ItemLibrary.Ordinal;
 
 public class BATFileVisitor implements FileVisitor<Path> {
-    private static BATFileVisitor visitor = new BATFileVisitor();
     private static final Logger logger = Logger.getLogger("[File Visit Test]");
     private final LinkedList<LocalizableItem> itemList = new LinkedList<>();
 
@@ -26,10 +26,15 @@ public class BATFileVisitor implements FileVisitor<Path> {
         return FileVisitResult.CONTINUE;
     }
 
-    public static LinkedList<LocalizableItem> visit(Path path) throws IOException {
+    public static LinkedList<LocalizableItem> visit(@Nullable BATFileVisitor visitor, Path... paths) throws IOException {
+        if (visitor == null) {
+            visitor = new BATFileVisitor();
+        }
         logger.setLevel(Level.INFO);
         visitor.itemList.clear();
-        Files.walkFileTree(path, visitor);
+        for (Path path : paths) {
+            Files.walkFileTree(path, visitor);
+        }
         visitor.itemList.sort(LocalizableItem::compareTo);
         return visitor.itemList;
     }

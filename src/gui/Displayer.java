@@ -1,155 +1,217 @@
 
 package gui;
 
+
+import io.BATFileVisitor;
+import io.item.ItemLibrary;
 import io.item.LocalizableItem;
 
 import javax.swing.*;
+import javax.swing.plaf.FontUIResource;
 import java.awt.*;
-import java.io.PrintStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.FileVisitResult;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.time.LocalDate;
 import java.util.LinkedList;
+import java.util.List;
 
 import static Language.LanguageManager.getI18nText;
-import static io.BATFileVisitor.visit;
+import static javax.swing.JFileChooser.DIRECTORIES_ONLY;
 
-//NetBean生成
-public class Displayer extends javax.swing.JFrame {
-    private Path path;
+public class Displayer extends JFrame {
+    private JFileChooser pathChooser;
+    private JTextArea out;
+    private JPanel selectPanel;
+    private JPanel pathPanel;
+    private JPanel startPanel;
+    private JCheckBox workShopCheck;
+    private JButton selectButton;
+    private JButton startButton;
+    private JTextField path;
+    private ProgressMonitor pm;
 
-    public Displayer(String paths) {
-        try {
-            path=Paths.get(paths);
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            setResizable(false);
-            initComponents();
-        }catch (Exception e){
-            throw new RuntimeException(e);
+    public Displayer(String path) {
+        initComponents();
+        setUpComponents();
+        addComponents();
+        pathChooser.setCurrentDirectory(new File(path));
+        this.path.setText(path);
+        pack();
+    }
+
+    //设置默认字体
+    //https://stackoverflow.com/questions/51194267/set-default-font-of-swing-application-once-even-even-if-new-text-is-drawn
+    private static void setUIFont() {
+        FontUIResource f = new FontUIResource("Sans", Font.PLAIN, 12);
+        java.util.Enumeration keys = UIManager.getDefaults().keys();
+        while (keys.hasMoreElements()) {
+            Object key = keys.nextElement();
+            Object value = UIManager.get(key);
+            if (value instanceof FontUIResource)
+                UIManager.put(key, f);
         }
     }
 
-    private void initComponents(){
-
-        javax.swing.JScrollPane jScrollPane1 = new javax.swing.JScrollPane();
-        javax.swing.JTextArea jTextArea1 = new javax.swing.JTextArea();
-        javax.swing.JButton jButton1 = new javax.swing.JButton();
-        javax.swing.JButton jButton2 = new javax.swing.JButton();
-        javax.swing.JProgressBar jProgressBar1 = new javax.swing.JProgressBar();
-        javax.swing.JTextField jTextField1 = new javax.swing.JTextField();
-
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        String version = "V3.7";
+    private void initComponents() {
+        String version = "V3.8";
+        //设置默认异常捕获
+        Thread.setDefaultUncaughtExceptionHandler((t, e) ->
+        {
+            out.append(getI18nText("gui.error") + "\n" + t.toString() + "\n");
+            e.printStackTrace(new PrintWriter(new OutputStreamWriter(new JTextAreaWithInputStream(out), StandardCharsets.UTF_8), true));
+            pm.setProgress(100);
+            selectButton.setEnabled(true);
+            startButton.setEnabled(true);
+        });
+        //将UI设置在所有组件的前面
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            setUIFont();
+        }
+        catch (Exception ignore) {
+        }
+        //创建所有组件
+        pm = new ProgressMonitor(this, "", getI18nText("gui.processing"), 0, 100);
+        pathChooser = new JFileChooser();
+        out = new JTextArea();
+        selectPanel = new JPanel();
+        pathPanel = new JPanel();
+        startPanel = new JPanel();
+        workShopCheck = new JCheckBox(getI18nText("gui.checkbox.workshop"));
+        selectButton = new JButton(getI18nText("gui.button.filechoose"));
+        startButton = new JButton(getI18nText("gui.button.start"));
+        path = new JTextField();
         setTitle(getI18nText("gui.title") + version);
-        setIconImage(new ImageIcon(getClass().getResource("/assets/icon.jpg")).getImage());
-        jTextField1.setEditable(false);
-        jTextArea1.setEditable(false);
-        jTextArea1.setColumns(20);
-        jTextArea1.setFont(new java.awt.Font(Font.SANS_SERIF, Font.PLAIN, 13)); // NOI18N
-        jTextArea1.setRows(5);
-        jScrollPane1.setViewportView(jTextArea1);
+        setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+    }
 
-        jButton1.setFont(new java.awt.Font(Font.SANS_SERIF, Font.PLAIN, 12)); // NOI18N
-        jButton1.setText(getI18nText("gui.button.start"));
-        jButton1.addActionListener(evt -> new SwingWorker<Boolean, String>() {
-            private long time;
-            private LinkedList<LocalizableItem> itemMap;
-
-            @Override
-            protected Boolean doInBackground() {
-                jTextField1.setText(getI18nText("gui.processing"));
-                jTextArea1.setEditable(false);
-                jTextArea1.setText("");
-                jButton1.setEnabled(false);
-                jButton2.setEnabled(false);
-                time = System.nanoTime();
-                try {
-                    itemMap = visit(path);
-                }
-                catch (Exception ex) {
-                    jTextArea1.append(getI18nText("gui.error") + "\n");
-                    ex.printStackTrace(new PrintStream(new JTextAreaWithInputStream(jTextArea1)));
-                    jTextField1.setText(path.toString());
-                    jTextArea1.setEditable(true);
-                    jButton1.setEnabled(true);
-                    jButton2.setEnabled(true);
-                    return false;
-                }
-                return true;
+    private void setUpComponents() {
+        //设置选择框
+        for (ItemLibrary item : ItemLibrary.values()) {
+            if (!item.equals(ItemLibrary.Ordinal)) {
+                selectPanel.add(new JCheckBox(item.getName(), true));
             }
+        }
+        //设置选择按钮
+        selectButton.addActionListener((Action) -> {
+            pathChooser.setFileSelectionMode(DIRECTORIES_ONLY);
+            pathChooser.setDialogTitle(getI18nText("gui.button.filechoose.title"));
+            pathChooser.setApproveButtonText(getI18nText("gui.button.filechoose.select"));
+            pathChooser.showDialog(this, null);
+            if (pathChooser.getSelectedFile().isDirectory()) {
+                path.setText(pathChooser.getSelectedFile().getPath());
+            }
+        });
+        //设置输出区域
+        out.setRows(30);
+        out.setEditable(false);
+        //设置进度条
+        pm.setMillisToDecideToPopup(0);
+        //设置开始按钮事件
+        startButton.addActionListener((Action) ->
+        {
+            //使进度条显示
+            pm.setProgress(0);
+            //构建SwingWorker
+            new SwingWorker<LinkedList<LocalizableItem>, String>() {
+                long time;
 
-            @Override
-            protected void done() {
-                jTextArea1.append(getI18nText("gui.result.cost") + (System.nanoTime() - time) * 10E-9 + " s\n");
-                jTextArea1.append(getI18nText("gui.result.date") + LocalDate.now() + "\n");
-                String lastType = "";
-                for (LocalizableItem item : itemMap) {
-                    if (!item.getType().equals(lastType)) {
-                        lastType = item.getType();
-                        jTextArea1.append("\n===============" + lastType + "===============\n\n");
+                @Override
+                protected LinkedList<LocalizableItem> doInBackground() throws IOException {
+                    //清空输出
+                    out.setText("");
+                    //起始时间
+                    time = System.nanoTime();
+                    //禁用按钮
+                    selectButton.setEnabled(false);
+                    startButton.setEnabled(false);
+                    //创建内部类以覆盖方法
+                    class Visitor extends BATFileVisitor {
+                        @Override
+                        public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                            publish(file.toString());
+                            super.visitFile(file, attrs);
+                            return pm.isCanceled() ? FileVisitResult.TERMINATE : FileVisitResult.CONTINUE;
+                        }
                     }
-                    jTextArea1.append(item.toString() + "\n");
+                    //游戏目录：...\steamapps\common\Unturned
+                    Path gamePath = Paths.get(path.getText());
+                    //创意工坊物品目录：...\steamapps\workshop\content\304930
+                    Path workshopPath = Paths.get(gamePath.toFile().getParentFile().getParentFile().getPath(), "workshop", "content", "304930");
+                    //判断创意工坊
+                    if (workShopCheck.isSelected()) {
+                        return Visitor.visit(new Visitor(), gamePath, workshopPath);
+                    }
+                    else {
+                        return Visitor.visit(new Visitor(), Paths.get(path.getText()));
+                    }
                 }
-                jTextField1.setText(path.toString());
-                jTextArea1.setEditable(true);
-                jButton1.setEnabled(true);
-                jButton2.setEnabled(true);
-            }
-        }.execute());
 
-        jButton2.setFont(new java.awt.Font(Font.SANS_SERIF, Font.PLAIN, 12)); // NOI18N
-        jButton2.setText(getI18nText("gui.button.filechoose"));
-        jButton2.addActionListener(evt -> {
-            JFileChooser chooser=new JFileChooser(path.toFile());
-            chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-            chooser.setDialogTitle(getI18nText("gui.button.filechoose.title"));
-            chooser.showDialog(jButton2, getI18nText("gui.button.filechoose.select"));
-            if(chooser.getSelectedFile()!=null) {
-                path = chooser.getSelectedFile().toPath();
-                jTextField1.setText(path.toString());
-            }
+                @Override
+                protected void process(List<String> chunks) {
+                    if (!pm.isCanceled()) {
+                        for (String path : chunks) {
+                            //防止超过100
+                            pm.setProgress(chunks.size() > 100 ? 99 : chunks.size());
+                            pm.setNote(path);
+                        }
+                    }
+                }
+
+                @Override
+                protected void done() {
+                    List<LocalizableItem> itemList;
+                    try {
+                        itemList = get();
+                    }
+                    catch (Exception ex) {
+                        throw new RuntimeException(ex);
+                    }
+                    if (itemList != null && !itemList.isEmpty()) {
+                        //输出生成时间和日期
+                        out.append(getI18nText("gui.result.cost") + (System.nanoTime() - time) * 10E-9 + " s\n");
+                        out.append(getI18nText("gui.result.date") + LocalDate.now() + "\n");
+                        //类型留存
+                        String lastType = "";
+                        for (LocalizableItem item : itemList) {
+                            for (Component checkBox : selectPanel.getComponents()) {
+                                //类型相符且已被选中
+                                if (item.getType().equals(((JCheckBox) checkBox).getText()) && ((JCheckBox) checkBox).isSelected()) {
+                                    if (!lastType.equals(item.getType())) {
+                                        lastType = item.getType();
+                                        out.append("\n===============" + lastType + "===============\n\n");
+                                    }
+                                    out.append(item.toString() + "\n");
+                                }
+                            }
+                        }
+                        pm.setProgress(100);
+                        selectButton.setEnabled(true);
+                        startButton.setEnabled(true);
+                    }
+                }
+            }.execute();
         });
 
 
-        jTextField1.setFont(new java.awt.Font(Font.SANS_SERIF, Font.PLAIN, 12)); // NOI18N
-        jTextField1.setText(path.toString());
+    }
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(layout.createSequentialGroup()
-                                .addContainerGap()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(jScrollPane1)
-                                        .addGroup(layout.createSequentialGroup()
-                                                .addGap(4, 4, 4)
-                                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                                        .addGroup(layout.createSequentialGroup()
-                                                                .addComponent(jTextField1)
-                                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                                .addComponent(jButton2)))))
-                                .addContainerGap())
-                        .addGroup(layout.createSequentialGroup()
-                                .addGap(145, 145, 145)
-                                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addContainerGap(155, Short.MAX_VALUE))
-        );
-        layout.setVerticalGroup(
-                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(layout.createSequentialGroup()
-                                .addContainerGap()
-                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 323, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(jButton2))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jButton1)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 12, Short.MAX_VALUE)
-                                .addContainerGap())
-        );
-
-        pack();
+    private void addComponents() {
+        pathPanel.add(path);
+        pathPanel.add(selectButton);
+        startPanel.add(workShopCheck);
+        startPanel.add(startButton);
+        add(new JScrollPane(out));
+        add(selectPanel);
+        add(pathPanel);
+        add(startPanel);
     }
 }

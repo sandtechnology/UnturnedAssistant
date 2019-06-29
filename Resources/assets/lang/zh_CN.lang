@@ -1,5 +1,6 @@
 gui.title=Unturned ID生成器 版本
 gui.button.start=开始生成
+gui.checkbox.workshop=是否生成创意工坊物品？
 gui.processing=处理中....
 gui.error=抱歉，出现了一个错误
 gui.result.cost=耗时：
